@@ -7,7 +7,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 @app.route('/')
 def index():
-  render_template('index.html', data=[{
+  return render_template('index.html', data=[{
     {
       'description': 'Todo 1'
     }, 
@@ -18,3 +18,8 @@ def index():
       'description': 'Todo 3'
     }
   }])
+
+
+
+if __name__ == '__main__':
+  app.run()
