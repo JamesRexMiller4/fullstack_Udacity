@@ -12,6 +12,25 @@
   }
   ul {
     list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 300px;
+  }
+  li {
+    clear: both;
+  }
+  li button {
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    color: red;
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+  }
+  .lists-wrapper, .todos-wrapper {
+    display: inline-block;
+    vertical-align: top;
   }
   .hidden {
     display: none;
@@ -28,6 +47,7 @@
     <li>
       <input class='check-completed' data-id='{{ d.id }}' type='checkbox' {% if d.completed %} checked {% endif %}/>
       {{ d.description }}
+      <button class='delete-btn' data-id='{{ d.id }}'>&cross;</button>
     </li>
     {% endfor %}
   </ul>
@@ -36,29 +56,50 @@
 
 <script>
   const checkboxes = document.querySelectorAll('.check-completed');
-  
+
   for (let i = 0; i < checkboxes.length; i++) {
     const checkbox = checkboxes[i];
-    const todoId = e.target.dataset['id'];
+    checkbox.onchange = function(e) {
+      const newCompleted = e.target.checked;
+      const todoId = e.target.dataset['id'];
+      fetch('/todos/' + todoId + '/set-completed', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "completed": newCompleted
+        })
+      })
+      .then(function() {
+        document.getElementById('error').className = 'hidden';
+      })
+      .catch(function() {
+        document.getElementById('error').className = '';
+      })
+    }
   }
 
-  checkbox.onchange = function(e) {
-    const newCompleted = e.target.checked;
-    fetch('/todos/' + todoId + '/set-completed', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        "completed": newCompleted
+  const buttons = document.querySelectorAll('.delete-btn');
+
+  for (let i = 0; i < buttons.length; i++) {
+    const button = buttons[i];
+    button.onclick = function(e) {
+      console.log(e)
+      const todoId = e.target.dataset.id
+      fetch('/todos/' + todoId + '/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
-    })
-    .then(function() {
-      document.getElementById('error').className = 'hidden';
-    })
-    .catch(function() {
-      document.getElementById('error').className = '';
-    })
+      .then(function() {
+        document.getElementById('error').className = 'hidden';
+      })
+      .catch(function() {
+        document.getElementById('error').className = '';
+      })
+    } 
   }
 
   document.getElementById('form').onsubmit = function(e) {

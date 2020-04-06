@@ -15,8 +15,8 @@ class Todo(db.Model):
   description = db.Column(db.String(), nullable=False)
   completed = db.Column(db.Boolean(), nullable=False)
 
-# def __repr__(self):
-#     return f'<Todo {self.id} {self.description}>'
+def __repr__(self):
+    return f'<Todo {self.id} {self.description}>'
 
 @app.route('/')
 def index():
@@ -47,17 +47,29 @@ def create_todo():
 
 @app.route('/todos/<todo_id>/set-completed', methods=['POST'])
 def set_completed(todo_id):
+  try:
+    completed_value = request.get_json()['completed']
+    todo = Todo.query.get(todo_id)
+    todo.completed = completed_value
+    db.session.commit()
+  except:
+    db.session.rollback()
+  finally:
+    db.session.close()
+  return redirect(url_for('index'))
+    
+@app.route('/todos/<todo_id>/delete', methods=['DELETE'])
+def remove_todo(todo_id):
     try:
-      completed_value = request.get_json()['completed']
-      todo = Todo.query.get(todo_id)
-      todo.completed = completed_value
+      Todo.query.filter_by(id=todo_id).delete()
       db.session.commit()
     except:
       db.session.rollback()
     finally:
       db.session.close()
     return redirect(url_for('index'))
-    
+
+
 
 if __name__ == '__main__':
-  app.run()
+  app.run(debug=True)
