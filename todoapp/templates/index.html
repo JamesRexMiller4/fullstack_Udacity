@@ -7,6 +7,11 @@
   <title>Flask Todo App</title>
 </head>
 <body>
+  <form action='/todos/create' method='POST'>
+    <label>Add ToDo</label>
+    <input id='description-input' type='text' name='description'>
+    <input type='submit' value='create'>
+  </form>
   <ul>
     {% for d in data %}
     <li>{{ d.description }}</li>
