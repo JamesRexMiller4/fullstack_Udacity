@@ -6,16 +6,51 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Flask Todo App</title>
 </head>
+<style>
+  div {
+    color: red;
+  }
+  .hidden {
+    display: none;
+  }
+</style>
 <body>
-  <form action='/todos/create' method='POST'>
+  <form id='form'>
     <label>Add ToDo</label>
     <input id='description-input' type='text' name='description'>
     <input type='submit' value='create'>
   </form>
-  <ul>
+  <ul id='todos'>
     {% for d in data %}
     <li>{{ d.description }}</li>
     {% endfor %}
   </ul>
+  <div id='error' class='hidden'>Something went wrong!</div>
 </body>
+<script>
+  document.getElementById('form').onsubmit = function(e) {
+    e.preventDefault();
+    fetch('/todos/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'description': document.getElementById('description-input').value
+      })
+    })
+      .then(function(res) {
+        return res.json()
+      })
+      .then(function(data) {
+        const liItem = document.createElement('LI');
+        liItem.innerHTML = data['description'];
+        document.getElementById('todos').appendChild(liItem);
+        document.getElementById('error').className = 'hidden';
+      })
+      .catch(function() {
+        document.getElementById('error').className = '';
+      })
+  }
+</script>
 </html>
