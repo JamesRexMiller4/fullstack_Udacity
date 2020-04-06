@@ -85,9 +85,8 @@
   for (let i = 0; i < buttons.length; i++) {
     const button = buttons[i];
     button.onclick = function(e) {
-      console.log(e)
-      const todoId = e.target.dataset.id
-      fetch('/todos/' + todoId + '/delete', {
+      const todoId = e.target.dataset['id']
+      fetch('/delete/' + todoId, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
