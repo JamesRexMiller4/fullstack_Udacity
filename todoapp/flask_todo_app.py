@@ -1,11 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import sys
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost:5432/todoapp'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 class Todo(db.Model):
   __tablename__ = 'todos'
@@ -36,9 +38,12 @@ def create_todo():
     error = True
     db.session.rollback()
     print(sys.exc_info())
+    
   finally:
     db.session.close()
-  if not error: 
+  if error: 
+    abort(400)
+  else:
     return jsonify(body)
 
 
