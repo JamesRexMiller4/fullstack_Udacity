@@ -13,9 +13,10 @@ class Todo(db.Model):
   __tablename__ = 'todos'
   id = db.Column(db.Integer, primary_key=True)
   description = db.Column(db.String(), nullable=False)
+  completed = db.Column(db.Boolean(), nullable=False)
 
-  def __repr__(self):
-    return f'<Todo {self.id} {self.description}>'
+  # def __repr__(self):
+  #   return f'<Todo {self.id} {self.description}>'
 
 @app.route('/')
 def index():
@@ -27,7 +28,7 @@ def create_todo():
   body = {}
   try:
     description_value = request.get_json()['description']
-    todo = Todo(description=description_value)
+    todo = Todo(description=description_value, completed=False)
 
     db.session.add(todo)
     db.session.commit()
