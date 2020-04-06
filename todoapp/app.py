@@ -15,8 +15,8 @@ class Todo(db.Model):
   description = db.Column(db.String(), nullable=False)
   completed = db.Column(db.Boolean(), nullable=False)
 
-def __repr__(self):
-    return f'<Todo {self.id} {self.description}>'
+# def __repr__(self):
+#     return f'<Todo {self.id} {self.description}>'
 
 @app.route('/')
 def index():
