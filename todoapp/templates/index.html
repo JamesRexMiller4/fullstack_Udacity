@@ -25,20 +25,19 @@
   </form>
   <ul id='todos'>
     {% for d in data %}
-    <li>
-      <input class='check-completed' type='checkbox' {% if d.completed %} checked {% endif %}/>
-      {{ d.description }}</li>
+    <li><input class='check-completed' data-id="{{ d.id }}" type='checkbox' {% if d.completed %} checked {% endif %}/>{{ d.description }}</li>
     {% endfor %}
   </ul>
   <div id='error' class='hidden'>Something went wrong!</div>
 </body>
 <script>
   const checkboxes = document.querySelectorAll('.check-completed');
-  for(let i=0; i < checkboxes.length; i++) {
+  for (let i = 0; i < checkboxes.length; i++) {
     const checkbox = checkboxes[i];
+    const todoId = e.target.dataset['id'];
     checkbox.onchange = function(e) {
       const newCompleted = e.target.checked;
-      fetch('/todos/set-completed', {
+      fetch('/todos/' + todoId + '/set-completed', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -46,6 +45,12 @@
         body: JSON.stringify({
           "completed": newCompleted
         })
+      })
+      .then(function() {
+        document.getElementById('error').className = 'hidden';
+      })
+      .catch(function() {
+        document.getElementById('error').className = '';
       })
     }
   }
