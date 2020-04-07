@@ -22,6 +22,22 @@ class Todo(db.Model):
   completed = db.Column(db.Boolean(), nullable=False, default=False)
   todo_list_id = db.Column(db.Integer, db.ForeignKey('todo_lists.id'), nullable=False)
 
+order_items = db.Table('order_items',
+    db.Column('order_id', db.Integer, db.ForeignKey('order.id'), primary_key=True),
+    db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True)
+)
+
+class Order(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  status = db.Column(db.String(), nullable=False)
+  products = db.relationship('Product', secondary=order_items,
+      backref=db.backref('orders', lazy=True))
+
+class Product(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(), nullable=False)
+
+
 # def __repr__(self):
 #     return f'<Todo {self.id} {self.description}>'
 
