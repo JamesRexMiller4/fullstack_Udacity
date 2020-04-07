@@ -7,7 +7,7 @@
   <title>Flask Todo App</title>
 </head>
 <style>
-  div {
+  #error {
     color: red;
   }
   ul {
@@ -37,21 +37,32 @@
   }
 </style>
 <body>
-  <form id='form'>
-    <label>Add ToDo</label>
-    <input id='description-input' type='text' name='description'>
-    <input type='submit' value='create'>
-  </form>
-  <ul id='todos'>
-    {% for d in data %}
-    <li>
-      <input class='check-completed' data-id='{{ d.id }}' type='checkbox' {% if d.completed %} checked {% endif %}/>
-      {{ d.description }}
-      <button class='delete-btn' data-id='{{ d.id }}'>&cross;</button>
-    </li>
-    {% endfor %}
-  </ul>
-  <div id='error' class='hidden'>Something went wrong!</div>
+  <div class='lists-wrapper'>
+    <ul id='todo-lists'></div>
+      {% for list in lists %}
+      <li>
+        <a href='/lists/{{ list.id }}'>{{ list.list_name }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class='todos-wrapper'>
+    <h4>{{ active_list.list_name }}</h4>
+    <form id='form'>
+      <label>Add ToDo</label>
+      <input id='description-input' type='text' name='description'>
+      <input type='submit' value='create'>
+    </form>
+    <ul id='todos'>
+      {% for todo in todos %}
+      <li>
+        <input class='check-completed' data-id='{{ todo.id }}' type='checkbox' {% if todo.completed %} checked {% endif %}/>
+        {{ todo.description }}
+        <button class='delete-btn' data-id='{{ todo.id }}'>&cross;</button>
+      </li>
+      {% endfor %}
+    </ul>
+    <div id='error' class='hidden'>Something went wrong!</div>
+    </div>
 </body>
 
 <script>
